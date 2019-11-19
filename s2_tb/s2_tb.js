@@ -257,15 +257,15 @@
 	}
     };
 
-    // general function to traslate panel pins to hardware pins
+    // general function to traslate TECboard pins to GPIO pins
     function translatePin(pin) {
 	if (pin.startsWith("A") || pin.startsWith("I")) {
-	    return parseInt(pins_map[pin]);
+	    return parseInt(pin_map[pin]);
         }
         else {
 	    return pin;
 	}
-    }
+    };
 
     // general function to validate the hardware pin value
     function validatePin(pin) {
