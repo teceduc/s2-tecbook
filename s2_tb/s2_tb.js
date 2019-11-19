@@ -17,11 +17,29 @@
 
 (function (ext) {
     var socket = null;
-
     var connected = false;
+
+    // pin mapping for TECboard rev0
+    var pin_map = {
+	'A0': 2,
+	'A1': 3,
+	'A2': 4,
+	'A3': 17,
+	'A4': 27,
+	'A5': 22,
+	'I0': 10,
+	'I1': 9,
+	'I2': 11,
+	'I3': 5,
+	'I4': 6,
+	'I5': 13,
+    };
 
     // an array to hold possible digital input values for the reporter block
     var digital_inputs = new Array(32);
+    // an array to hold previous digital input values for the hat blocks
+    var prev_state = new Array(32);
+
     var myStatus = 1; // initially yellow
     var myMsg = 'not_ready';
 
@@ -40,6 +58,8 @@
 
             // initialize the reporter buffer
             digital_inputs.fill('0');
+            // initialize the event status buffer
+            prev_state.fill('0');
 
             // give the connection time establish
             window.setTimeout(function() {
@@ -88,6 +108,7 @@
         if (connected == false) {
             alert("Server Not Connected");
         }
+	pin = translatePin(pin);
         // validate the pin number for the mode
         if (validatePin(pin)) {
             var msg = JSON.stringify({
@@ -103,6 +124,7 @@
             alert("Server Not Connected");
         }
         console.log("digital write");
+	pin = translatePin(pin);
         // validate the pin number for the mode
         if (validatePin(pin)) {
             var msg = JSON.stringify({
@@ -119,6 +141,7 @@
             alert("Server Not Connected");
         }
         console.log("analog write");
+	pin = translatePin(pin);
         // validate the pin number for the mode
         if (validatePin(pin)) {
             // validate value to be between 0 and 255
@@ -146,6 +169,7 @@
             alert("Server Not Connected");
         }
         console.log("servo");
+	pin = translatePin(pin);
         // validate the pin number for the mode
         if (validatePin(pin)) {
             // validate value to be between 0° and 180°
@@ -173,6 +197,7 @@
         if (connected == false) {
             alert("Server Not Connected");
         }
+	pin = translatePin(pin);
         // validate the pin number for the mode
         if (validatePin(pin)) {
             var msg = JSON.stringify({
@@ -189,12 +214,52 @@
             alert("Server Not Connected");
         }
         else {
-                return digital_inputs[parseInt(pin)]
-
+	    pin = translatePin(pin);
+            return digital_inputs[parseInt(pin)]
         }
     };
 
-    // general function to validate the pin value
+    // when the pin changes to high
+    ext.when_pin_tohigh = function (pin) {
+        if (connected == false) {
+            alert("Server Not Connected");
+        }
+        else {
+	    var _pin = parseInt(translatePin(pin));
+	    if (digital_inputs[_pin] === '1' && prev_state[_pin] === '0') {
+		prev_state[_pin] = '1'
+		return true;
+	    }
+	    return false;
+	}
+    };
+
+    // when the pin changes to low
+    ext.when_pin_tolow = function (pin) {
+        if (connected == false) {
+            alert("Server Not Connected");
+        }
+        else {
+	    var _pin = parseInt(translatePin(pin));
+	    if (digital_inputs[_pin] === '0' && prev_state[_pin] === '1') {
+		prev_state[_pin] = '0'
+		return true;
+	    }
+	    return false;
+	}
+    };
+
+    // general function to traslate panel pins to hardware pins
+    function translatePin(pin) {
+	if (pin.startsWith("A") || pin.startsWith("I")) {
+	    return parseInt(pins_map[pin]);
+        }
+        else {
+	    return pin;
+	}
+    }
+
+    // general function to validate the hardware pin value
     function validatePin(pin) {
         var rValue = true;
         if (pin === 'PIN') {
@@ -215,22 +280,25 @@
     var descriptor = {
         blocks: [
             // Block type, block name, function name
-            ["w", 'Connect to s2_pi server.', 'cnct'],
-            [" ", 'Set BCM %n as an Input', 'input','PIN'],
-            [" ", "Set BCM %n Output to %m.high_low", "digital_write", "PIN", "0"],
-            [" ", "Set BCM PWM Out %n to %n", "analog_write", "PIN", "VAL"],
-			[" ", "Set BCM %n as Servo with angle = %n (0° - 180°)", "servo", "PIN", "0"],     // ***Hackeduca --> Block for Servo 			
-            [" ", "Tone: BCM %n HZ: %n", "play_tone", "PIN", 1000],
-            ["r", "Read Digital Pin %n", "digital_read", "PIN"]
+	    ["w", 'Connect to the TECBOOK panel.', 'cnct'],
+            [" ", 'Set BCM %m.adv_pins as an Input', 'input',''],
+            [" ", "Set BCM %m.adv_pins Output to %m.high_low", "digital_write", "PIN", "0"],
+            [" ", "Set BCM PWM Out %m.adv_pins to %n", "analog_write", "PIN", "VAL"],
+	    [" ", "Set BCM %m.adv_pins as Servo with angle = %n (0° - 180°)", "servo", "PIN", "0"],
+            [" ", "Tone: BCM %m.adv_pins HZ: %n", "play_tone", "PIN", 1000],
+            ["r", "Read Digital Pin %m.adv_pins", "digital_read", "PIN"],
+            ["h", "When Pin %m.adv_pins is touched", "when_pin_tolow", "I0"],
+            ["h", "When Pin %m.adv_pins is released", "when_pin_tohigh", "I0"]
 
         ],
         "menus": {
-            "high_low": ["0", "1"]
-
+            high_low: ["0", "1"],
+	    int_pins: ["I0","I1","I2","I3","I4","I5"],
+	    adv_pins: ["A0","A1","A2","A3","A4","A5"]
         },
-        url: 'http://MrYsLab.github.io/s2-pi'
+        url: 'http://teceduc.github.io/s2-tecbook'
     };
 
     // Register the extension
-    ScratchExtensions.register('s2_pi', descriptor, ext);
+    ScratchExtensions.register('s2_tecbook', descriptor, ext);
 })({});
