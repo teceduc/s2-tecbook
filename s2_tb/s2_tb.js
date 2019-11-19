@@ -32,7 +32,7 @@
 	'I2': 11,
 	'I3': 5,
 	'I4': 6,
-	'I5': 13,
+	'I5': 13
     };
 
     // an array to hold possible digital input values for the reporter block
@@ -63,9 +63,8 @@
 
             // give the connection time establish
             window.setTimeout(function() {
-            callback();
-        }, 1000);
-
+		callback();
+            }, 1000);
         };
 
         window.socket.onmessage = function (message) {
@@ -76,16 +75,17 @@
             var reporter = msg['report'];
             if(reporter === 'digital_input_change') {
                 var pin = msg['pin'];
-                digital_inputs[parseInt(pin)] = msg['level']
+                digital_inputs[parseInt(pin)] = msg['level'];
             }
-            console.log(message.data)
+            console.log(message.data);
         };
+
         window.socket.onclose = function (e) {
             console.log("Connection closed.");
             socket = null;
             connected = false;
             myStatus = 1;
-            myMsg = 'not_ready'
+            myMsg = 'not_ready';
         };
     };
 
@@ -197,6 +197,7 @@
         if (connected == false) {
             alert("Server Not Connected");
         }
+	console.log("play_tone");
 	pin = translatePin(pin);
         // validate the pin number for the mode
         if (validatePin(pin)) {
@@ -214,6 +215,7 @@
             alert("Server Not Connected");
         }
         else {
+	    console.log("digital_read");
 	    pin = translatePin(pin);
             return digital_inputs[parseInt(pin)]
         }
@@ -226,8 +228,9 @@
 	    return false;
         }
         else {
+	    console.log("when_pin_tohigh");
 	    var _pin = parseInt(translatePin(pin));
-	    if (digital_inputs[_pin] === '1' && prev_state[_pin] === '0') {
+	    if (digital_inputs[_pin] == '1' && prev_state[_pin] == '0') {
 		prev_state[_pin] = '1'
 		return true;
 	    }
@@ -242,8 +245,9 @@
 	    return false;
         }
         else {
+	    console.log("when_pin_tolow");
 	    var _pin = parseInt(translatePin(pin));
-	    if (digital_inputs[_pin] === '0' && prev_state[_pin] === '1') {
+	    if (digital_inputs[_pin] == '0' && prev_state[_pin] == '1') {
 		prev_state[_pin] = '0'
 		return true;
 	    }
@@ -293,7 +297,7 @@
             ["h", "When Pin %m.adv_pins is released", "when_pin_tohigh", "I0"]
 
         ],
-        "menus": {
+        menus: {
             high_low: ["0", "1"],
 	    int_pins: ["I0","I1","I2","I3","I4","I5"],
 	    adv_pins: ["A0","A1","A2","A3","A4","A5"]
