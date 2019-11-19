@@ -16,7 +16,7 @@ setup(
     packages=['s2_tb'],
 
     entry_points={
-            'console_scripts': ['s2pi = s2_pi.s2_pi:run_server',
+            'console_scripts': ['s2tb = s2_tb.s2_tb:run_server',
                                 'sbx_to_sb2 = s2_pi.sbx_to_sb2:sbx_to_sb2'],
         },
     url='https://github.com/teceduc/s2-tecbook',
