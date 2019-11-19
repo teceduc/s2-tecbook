@@ -222,7 +222,8 @@
     // when the pin changes to high
     ext.when_pin_tohigh = function (pin) {
         if (connected == false) {
-            alert("Server Not Connected");
+            //alert("Server Not Connected");
+	    return false;
         }
         else {
 	    var _pin = parseInt(translatePin(pin));
@@ -237,7 +238,8 @@
     // when the pin changes to low
     ext.when_pin_tolow = function (pin) {
         if (connected == false) {
-            alert("Server Not Connected");
+            //alert("Server Not Connected");
+	    return false;
         }
         else {
 	    var _pin = parseInt(translatePin(pin));
