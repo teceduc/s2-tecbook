@@ -105,7 +105,8 @@
 
     // when the connect to server block is executed
     ext.input = function (pin) {
-        if (connected == false) {
+	console.log("input");
+	if (connected == false) {
             alert("Server Not Connected");
         }
 	pin = translatePin(pin);
@@ -120,10 +121,10 @@
 
     // when the digital write block is executed
     ext.digital_write = function (pin, state) {
-        if (connected == false) {
+        console.log("digital write");
+	if (connected == false) {
             alert("Server Not Connected");
         }
-        console.log("digital write");
 	pin = translatePin(pin);
         // validate the pin number for the mode
         if (validatePin(pin)) {
@@ -137,10 +138,10 @@
 
     // when the PWM block is executed
     ext.analog_write = function (pin, value) {
-        if (connected == false) {
+	console.log("analog write");        
+	if (connected == false) {
             alert("Server Not Connected");
         }
-        console.log("analog write");
 	pin = translatePin(pin);
         // validate the pin number for the mode
         if (validatePin(pin)) {
@@ -163,12 +164,13 @@
             }
         }
     };
-    // ***Hackeduca --> when the Servo block is executed
+
+    // when the Servo block is executed
     ext.servo = function (pin, value) {
-        if (connected == false) {
+        console.log("servo");        
+	if (connected == false) {
             alert("Server Not Connected");
         }
-        console.log("servo");
 	pin = translatePin(pin);
         // validate the pin number for the mode
         if (validatePin(pin)) {
@@ -194,10 +196,10 @@
 	
     // when the play tone block is executed
     ext.play_tone = function (pin, frequency) {
-        if (connected == false) {
+        console.log("play_tone");
+	if (connected == false) {
             alert("Server Not Connected");
         }
-	console.log("play_tone");
 	pin = translatePin(pin);
         // validate the pin number for the mode
         if (validatePin(pin)) {
@@ -211,11 +213,11 @@
 
     // when the digital read reporter block is executed
     ext.digital_read = function (pin) {
+	console.log("digital_read");
         if (connected == false) {
             alert("Server Not Connected");
         }
         else {
-	    console.log("digital_read");
 	    pin = translatePin(pin);
             return digital_inputs[parseInt(pin)]
         }
@@ -223,12 +225,12 @@
 
     // when the pin changes to high
     ext.when_pin_tohigh = function (pin) {
+	console.log("when_pin_tohigh");
         if (connected == false) {
             //alert("Server Not Connected");
 	    return false;
         }
         else {
-	    console.log("when_pin_tohigh");
 	    var _pin = parseInt(translatePin(pin));
 	    if (digital_inputs[_pin] == '1' && prev_state[_pin] == '0') {
 		prev_state[_pin] = '1'
@@ -240,12 +242,12 @@
 
     // when the pin changes to low
     ext.when_pin_tolow = function (pin) {
+	console.log("when_pin_tolow");
         if (connected == false) {
             //alert("Server Not Connected");
 	    return false;
         }
         else {
-	    console.log("when_pin_tolow");
 	    var _pin = parseInt(translatePin(pin));
 	    if (digital_inputs[_pin] == '0' && prev_state[_pin] == '1') {
 		prev_state[_pin] = '0'
@@ -280,22 +282,24 @@
             }
         }
         return rValue;
-    }
+    };
 
     // Block and block menu descriptions
     var descriptor = {
         blocks: [
             // Block type, block name, function name
 	    ["w", 'Connect to the TECBOOK panel.', 'cnct'],
-            [" ", 'Set BCM %m.adv_pins as an Input', 'input',''],
-            [" ", "Set BCM %m.adv_pins Output to %m.high_low", "digital_write", "PIN", "0"],
-            [" ", "Set BCM PWM Out %m.adv_pins to %n", "analog_write", "PIN", "VAL"],
-	    [" ", "Set BCM %m.adv_pins as Servo with angle = %n (0° - 180°)", "servo", "PIN", "0"],
-            [" ", "Tone: BCM %m.adv_pins HZ: %n", "play_tone", "PIN", 1000],
-            ["r", "Read Digital Pin %m.adv_pins", "digital_read", "PIN"],
-            ["h", "When Pin %m.adv_pins is touched", "when_pin_tolow", "I0"],
-            ["h", "When Pin %m.adv_pins is released", "when_pin_tohigh", "I0"]
-
+	    [" ", 'Set BCM %m.adv_pins as an Input', 'input',''],
+	    [" ", "Set BCM %m.adv_pins Output to %m.high_low", "digital_write",
+	     "PIN", "0"],
+	    [" ", "Set BCM PWM Out %m.adv_pins to %n", "analog_write",
+	     "PIN", "VAL"],
+	    [" ", "Set BCM %m.adv_pins as Servo with angle = %n (0° - 180°)",
+	     "servo", "PIN", "0"],
+	    [" ", "Tone: BCM %m.adv_pins HZ: %n", "play_tone", "PIN", 1000],
+	    ["r", "Read Digital Pin %m.adv_pins", "digital_read", "PIN"],
+	    ["h", "When Pin %m.adv_pins is touched", "when_pin_tolow", "I0"],
+	    ["h", "When Pin %m.adv_pins is released", "when_pin_tohigh", "I0"]
         ],
         menus: {
             high_low: ["0", "1"],
@@ -306,5 +310,5 @@
     };
 
     // Register the extension
-    ScratchExtensions.register('s2_tecbook', descriptor, ext);
+    ScratchExtensions.register('TECBOOK', descriptor, ext);
 })({});
