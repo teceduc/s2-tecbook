@@ -52,6 +52,16 @@
             window.socket.send(msg);
             myStatus = 2;
 
+	    // initialize interactive panel inputs
+	    for (const pin in pin_map) {
+		if (pin.startsWith('I')) {
+		    var msg = JSON.stringify({
+			"command": 'input', 'pin': pin_map[pin]
+		    });
+		    window.socket.send(msg);
+		}
+	    }
+
             // change status light from yellow to green
             myMsg = 'ready';
             connected = true;
