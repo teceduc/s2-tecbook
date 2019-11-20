@@ -289,7 +289,7 @@
         blocks: [
             // Block type, block name, function name
 	    ["w", 'Connect to the TECBOOK panel.', 'cnct'],
-	    [" ", 'Set BCM %m.adv_pins as an Input', 'input',''],
+	    [" ", 'Set BCM %m.adv_pins as an Input', 'input','PIN'],
 	    [" ", "Set BCM %m.adv_pins Output to %m.high_low", "digital_write",
 	     "PIN", "0"],
 	    [" ", "Set BCM PWM Out %m.adv_pins to %n", "analog_write",
